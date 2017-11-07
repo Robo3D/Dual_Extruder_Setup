@@ -1,0 +1,4 @@
+include README.md
+recursive-include octoprint_Dual_Extruder_Setup/templates *
+recursive-include octoprint_Dual_Extruder_Setup/translations *
+recursive-include octoprint_Dual_Extruder_Setup/static *
