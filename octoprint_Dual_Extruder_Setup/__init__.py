@@ -1,72 +1,56 @@
+# -*- coding: utf-8 -*-
+# @Author: Matt Pedler
+# @Date:   2017-11-07 11:43:20
+# @Last Modified by:   Matt Pedler
+# @Last Modified time: 2017-11-07 11:49:17
 # coding=utf-8
-from __future__ import absolute_import
 
-### (Don't forget to remove me)
-# This is a basic skeleton for your plugin's __init__.py. You probably want to adjust the class name of your plugin
-# as well as the plugin mixins it's subclassing from. This is really just a basic skeleton to get you started,
-# defining your plugin as a template plugin, settings and asset plugin. Feel free to add or remove mixins
-# as necessary.
-#
-# Take a look at the documentation on what other plugin mixins are available.
+from __future__ import absolute_import
 
 import octoprint.plugin
 
-class Dual_extruder_setupPlugin(octoprint.plugin.SettingsPlugin,
-                                octoprint.plugin.AssetPlugin,
-                                octoprint.plugin.TemplatePlugin):
+class Dual_Extruder_Setup(octoprint.plugin.SettingsPlugin,
+                          octoprint.plugin.AssetPlugin,
+                          octoprint.plugin.TemplatePlugin):
+    '''
+    The Goal for this plugin is to have a cross platform Single touch setup for Dual Extrusion on the Robo R2 and C2 printers.
+    We will accomplish this by exporting a function that will change the following
+     - Change the firmware to the most recent stable firmware
+     - Change the default printer profile to a Dual Extrusion profile
 
-	##~~ SettingsPlugin mixin
+    Secondary Goals will be to also have the ability to change back to a single extrusion machine on the fly.
+    '''
 
-	def get_settings_defaults(self):
-		return dict(
-			# put your plugin's default settings here
-		)
+    ##~~ SettingsPlugin mixin
 
-	##~~ AssetPlugin mixin
+    def get_settings_defaults(self):
+        return dict(
+            # put your plugin's default settings here
+        )
 
-	def get_assets(self):
-		# Define your plugin's asset files to automatically include in the
-		# core UI here.
-		return dict(
-			js=["js/Dual_Extruder_Setup.js"],
-			css=["css/Dual_Extruder_Setup.css"],
-			less=["less/Dual_Extruder_Setup.less"]
-		)
+    ##~~ AssetPlugin mixin
 
-	##~~ Softwareupdate hook
-
-	def get_update_information(self):
-		# Define the configuration for your plugin to use with the Software Update
-		# Plugin here. See https://github.com/foosel/OctoPrint/wiki/Plugin:-Software-Update
-		# for details.
-		return dict(
-			Dual_Extruder_Setup=dict(
-				displayName="Dual_extruder_setup Plugin",
-				displayVersion=self._plugin_version,
-
-				# version check: github repository
-				type="github_release",
-				user="Ximidar",
-				repo="Dual_Extruder_Setup",
-				current=self._plugin_version,
-
-				# update method: pip
-				pip="https://github.com/Ximidar/Dual_Extruder_Setup/archive/{target_version}.zip"
-			)
-		)
+    def get_assets(self):
+        # Define your plugin's asset files to automatically include in the
+        # core UI here.
+        return dict(
+            js=["js/Dual_Extruder_Setup.js"],
+            css=["css/Dual_Extruder_Setup.css"],
+            less=["less/Dual_Extruder_Setup.less"]
+        )
 
 
 # If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
 # ("OctoPrint-PluginSkeleton"), you may define that here. Same goes for the other metadata derived from setup.py that
 # can be overwritten via __plugin_xyz__ control properties. See the documentation for that.
-__plugin_name__ = "Dual_extruder_setup Plugin"
+__plugin_name__ = "Dual Extruder Setup"
 
 def __plugin_load__():
-	global __plugin_implementation__
-	__plugin_implementation__ = Dual_extruder_setupPlugin()
+    global __plugin_implementation__
+    __plugin_implementation__ = Dual_Extruder_Setup()
 
-	global __plugin_hooks__
-	__plugin_hooks__ = {
-		"octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
-	}
+    global __plugin_hooks__
+    __plugin_hooks__ = {
+        
+    }
 

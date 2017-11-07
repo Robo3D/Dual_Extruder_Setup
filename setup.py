@@ -24,10 +24,10 @@ plugin_description = """This is a tool for a one touch setup for Dual Extruders 
 plugin_author = "Matt Pedler"
 
 # The plugin's author's mail address.
-plugin_author_email = "MattP@robo3d.com"
+plugin_author_email = "MattP@Robo3d.com"
 
 # The plugin's homepage URL. Can be overwritten within OctoPrint's internal data via __plugin_url__ in the plugin module
-plugin_url = "https://github.com/Ximidar/Dual_Extruder_Setup"
+plugin_url = "https://github.com/Robo3D/Dual_Extruder_Setup"
 
 # The plugin's license. Can be overwritten within OctoPrint's internal data via __plugin_license__ in the plugin module
 plugin_license = "AGPLv3"
