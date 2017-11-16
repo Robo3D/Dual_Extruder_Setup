@@ -2,21 +2,21 @@
 # @Author: Matt Pedler
 # @Date:   2017-11-07 12:00:08
 # @Last Modified by:   Matt Pedler
-# @Last Modified time: 2017-11-15 15:20:50
+# @Last Modified time: 2017-11-15 16:09:31
 
 import requests
 import json
 import os
-from __init__ import base_plugin
 import yaml
 
 
 class Robo_Octo_Setup(object):
     """docstring for Octo_Setup"""
-    def __init__(self):
-        super(Octo_Setup, self).__init__()
+    def __init__(self, base_plugin):
+        super(Robo_Octo_Setup, self).__init__()
         #This URL will supply the most recent firmware release download links. 
         self.firmware_checker_addr = 'https://3ym5t3go29.execute-api.us-east-1.amazonaws.com/prod/Current_Firmware'
+        self.base_plugin = base_plugin
 
     def check_connection(self):
         '''
@@ -103,7 +103,7 @@ class Robo_Octo_Setup(object):
 
 
     def download_progress(self, progress):
-        print(progress)
+        self.base_plugin._logger.info(str(progress))
         '''
         overwritable function
         '''
@@ -126,14 +126,14 @@ class Robo_Octo_Setup(object):
        
 
         #get active profile
-        active_profile = base_plugin._settings.global_get(['printerProfiles', 'defaultProfile'])
+        active_profile = self.base_plugin._settings.global_get(['printerProfiles', 'defaultProfile'])
 
         #merge profiles
         updated_profile = self.merge_dicts(active_profile, selected_profile)
 
         #save profile
-        base_plugin._settings.global_set(['printerProfiles', 'defaultProfile'], updated_profile)
-        base_plugin._settings.save()
+        self.base_plugin._settings.global_set(['printerProfiles', 'defaultProfile'], updated_profile)
+        self.base_plugin._settings.save()
 
 
     def merge_dicts(self, *dict_args):
