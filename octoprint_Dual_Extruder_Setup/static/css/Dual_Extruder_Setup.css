@@ -1,48 +1,40 @@
 /* TODO: Have your plugin's CSS files generated to here. */
-/* Dropdown Button */
-.dropbtn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
+.robo_config_dropdown{
+    text-align: center;
+    vertical-align: middle;
+    align-items: center;
 }
 
-/* Dropdown button on hover & focus */
-.dropbtn:hover, .dropbtn:focus {
-    background-color: #3e8e41;
-}
-
-/* The container <div> - needed to position the dropdown content */
-.robo_config_dropdown {
-    position: relative;
+.config_item{
     display: inline-block;
-    margin: auto;
-    width: 100%;
-    padding: 10px;
 }
 
-/* Dropdown Content (Hidden by Default) */
-.robo_config_dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-/* Links inside the dropdown */
-.robo_config_dropdown-content a {
-    color: black;
-    padding: 12px 16px;
+.config_button{
+    background-color: #af4c4c; /* pastel red */
+    border: none;
+    color: white;
+    padding: 5px 32px;
+    text-align: center;
     text-decoration: none;
-    display: block;
+    display: inline-block;
+    font-size: 16px;
+    transform: translateX(0%) translateY(-15%);
+}
+.config_dropdown{
+
+}
+.robo_progress{
+    color:#fff!important;
+    background-color:#37bd00!important;
+    height:24px;
+    width:0;
+
 }
 
-/* Change color of dropdown links on hover */
-.robo_config_dropdown-content a:hover {background-color: #f1f1f1}
+.config_progress{
+    /*text-align: left;*/
+    color:#000!important;
+    background-color:#f1f1f1!important;
+    /*visibility: hidden;*/
 
-/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {display:block;}
+}

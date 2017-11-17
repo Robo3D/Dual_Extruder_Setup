@@ -2,13 +2,14 @@
 # @Author: Matt Pedler
 # @Date:   2017-11-07 11:43:20
 # @Last Modified by:   Matt Pedler
-# @Last Modified time: 2017-11-15 17:10:33
+# @Last Modified time: 2017-11-16 17:12:44
 # coding=utf-8
 
 from __future__ import absolute_import
 from . import Octo_Setup 
 from .Octo_Setup.Robo_Octo_Setup import Robo_Octo_Setup
 import flask
+import json
 
 import octoprint.plugin
 
@@ -29,6 +30,8 @@ class Dual_Extruder_Setup(octoprint.plugin.SettingsPlugin,
     #     super(Dual_Extruder_Setup, self).__init__(*args, **kwargs)
 
     #     pass
+
+    overall_progress = 0
 
     def on_after_startup(self):
         #Get the firmware plugin
@@ -62,32 +65,63 @@ class Dual_Extruder_Setup(octoprint.plugin.SettingsPlugin,
     def updater_placeholder(self, *args, **kwargs):
         return False
 
+    def firmware_progress(self, value):
+
+        self.overall_progress = value
+        #send the progress as a message to anyone who is listening.
+        self._plugin_manager.send_plugin_message(self._identifier, dict(type="firmware_progress", data=self.overall_progress))
+
     def install_firmware(self, model='R2'):
 
         #get firmware
         if self.octo_setup.check_connection():
+            self._logger.info("Downloading Firmware")
+            self.octo_setup.clear_callbacks()
+            self.octo_setup.register_progress_callback(self.firmware_progress)
             firm_path = self.octo_setup.download_firmware(version=model)
+            self._logger.info("Installing Firmware")
             self.flash_usb(firm_path)
         else:
             self._logger.info("No Connection to Lambda Function")
             return False
 
     def change_profile(self, model='R2'):
-
+        self._logger.info("Changing Profile")
         self.octo_setup.change_profile(version=model)
 
     @octoprint.plugin.BlueprintPlugin.route("/change_and_install", methods=['POST'])
-    def change_and_install(self, model="R2_Dual", **kwargs):
+    def change_and_install(self, **kwargs):
         self._logger.info("Change and install called.")
         if 'model' in flask.request.json:
             model = flask.request.json['model']
+            #report model            
+            if model == "R2 Dual":
+                model = "R2_Dual"
             self._logger.info("Model is: " + str(model))
-
-
+            #install Firmware
             self.install_firmware(model=str(model))
-            #self.change_profile(model=model)
+            #change profile
+            self.change_profile(model=str(model))
+            #return okay
             return flask.make_response("Ok.", 200)
         return flask.make_response("Error.", 500)
+
+    @octoprint.plugin.BlueprintPlugin.route("/get_model_options", methods=['GET'])
+    def get_model_options(self):
+        profile = self._settings.global_get(['printerProfiles', 'defaultProfile'])
+
+        model=None
+        if 'model' in profile:
+            model = profile['model']
+
+       
+        if model == "Robo R2":
+            return json.dumps(['R2', 'R2 Dual'])
+        elif model == 'Robo C2':
+            return json.dumps(['C2'])
+        else:
+            return json.dumps(['C2', 'R2', 'R2 Dual'])
+       
 
 
     ##~~ SettingsPlugin mixin

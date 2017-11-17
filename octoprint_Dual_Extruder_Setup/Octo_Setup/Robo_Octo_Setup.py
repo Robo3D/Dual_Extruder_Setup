@@ -2,7 +2,7 @@
 # @Author: Matt Pedler
 # @Date:   2017-11-07 12:00:08
 # @Last Modified by:   Matt Pedler
-# @Last Modified time: 2017-11-15 16:09:31
+# @Last Modified time: 2017-11-16 15:09:03
 
 import requests
 import json
@@ -12,6 +12,9 @@ import yaml
 
 class Robo_Octo_Setup(object):
     """docstring for Octo_Setup"""
+    _progress = 0
+    progress_callback = []
+
     def __init__(self, base_plugin):
         super(Robo_Octo_Setup, self).__init__()
         #This URL will supply the most recent firmware release download links. 
@@ -83,11 +86,9 @@ class Robo_Octo_Setup(object):
         if 'content-length' in r.headers:
             length = float(int(r.headers['content-length']))
             size = 0.00
-            progress = 0.00
         else:
             length = 0.00
             size = 0.00
-            progress = 0.00
         with open(dl_path, 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:
@@ -95,19 +96,28 @@ class Robo_Octo_Setup(object):
                     f.write(chunk)
                     #record progress
                     size += 1024.00 #not exact size of chunk, but close enough for this purpose
-                    progress = int((size/length)*100.00)
-                    self.download_progress(progress)
-
-
+                    self.progress = int((size/length)*100.00)
+                    
+        self.progress = 0
         return dl_path
 
+    @property
+    def progress(self):
+        return self._progress
 
-    def download_progress(self, progress):
-        self.base_plugin._logger.info(str(progress))
-        '''
-        overwritable function
-        '''
-        pass
+    @progress.setter
+    def progress(self, value):
+        self._progress = value
+        self.base_plugin._logger.info(self.progress)
+        for callback in self.progress_callback: 
+            callback(self.progress)
+
+    def register_progress_callback(self, callback):
+        if callable(callback):
+            self.progress_callback.append(callback)
+
+    def clear_callbacks(self):
+        self.progress_callback = []
 
     def change_profile(self, version="R2"):
         '''
@@ -118,18 +128,26 @@ class Robo_Octo_Setup(object):
         profiles = self.load_configs()
         selected_profile = None
         if profiles != False:
-            if version in profiles:
-                selected_profile = profiles[version]
+            if version in profiles['Profiles']:
+                selected_profile = profiles['Profiles'][version]
+            else:
+                self.base_plugin._logger.info(json.dumps(profiles,indent=4))
+                raise ValueError(str(version) + " Is not in profiles")
         else:
-            raise ValueError("profiles could not be loaded")
-        pass
-       
+            raise ValueError("profiles could not be loaded")       
 
         #get active profile
         active_profile = self.base_plugin._settings.global_get(['printerProfiles', 'defaultProfile'])
 
         #merge profiles
-        updated_profile = self.merge_dicts(active_profile, selected_profile)
+        if type(active_profile) == dict and type(selected_profile) == dict:
+            updated_profile = self.merge_dicts(active_profile, selected_profile)
+        else:
+            
+            self.base_plugin._logger.info(json.dumps(active_profile,indent=4))
+            self.base_plugin._logger.info(json.dumps(selected_profile,indent=4))
+            raise ValueError("Active profile or selected profile is not a dict")
+
 
         #save profile
         self.base_plugin._settings.global_set(['printerProfiles', 'defaultProfile'], updated_profile)

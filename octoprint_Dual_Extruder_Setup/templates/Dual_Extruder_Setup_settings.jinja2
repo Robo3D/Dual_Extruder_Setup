@@ -6,30 +6,26 @@
 
 <div id="#settings_plugin_Dual_Extruder_Setup">
     <div id="heading" class="text-center">
-        <h4>Dual Extruder Setup</h4>
+        <h4>Robo Configuration Tool</h4>
         <p>Change your setup to any Robo Printer configuration</p>
         <hr>
     </div>
 
-    <div class="robo_config_dropdown" style="text-align:center;">
-        <button data-bind="click: myFunction" class="dropbtn">Model</button>
-        <div id="setup_choices" class="robo_config_dropdown-content">
-            <a href="#">R2</a>
-            <a href="#">R2 Dual</a>
-            <a href="#">C2</a>
+    <div class="robo_config_dropdown">
+        <div class="config_item">
+            <select id="model_dropdown" class="config_dropdown" data-bind="options: printer_options, click: set_selected_model"></select>
         </div>
-        {# <p class="text-left"> #}
-        <button id="change to R2" class="btn btn-warning" data-bind="click: change_r2">Change to R2</button>
-        {# </p> #}
-        <select >
-            <option value>R2</option>
-            <option value>C2</option>
-            <option value>R2 Dual</option>
-        </select>
+        
+        <div class="config_item">
+            <button id="change_configuration" class="config_button" data-bind="click: change_configuration">Change Configuration</button>
+        </div>
+        
+    </div>
+
+    
+    <div class="config_progress">
+        <div id="robo_progress_bar" class="robo_progress">waiting...</div>
     </div>
     
-   {#  <div id="active" class="" style="text-align:center;">
-        
-
-    </div> #}
+    
 </div>
