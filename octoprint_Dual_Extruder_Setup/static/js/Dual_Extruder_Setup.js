@@ -7,27 +7,19 @@
 $(function() {
     function Dual_extruder_setupViewModel(parameters) {
         var self = this
+        self.printer_options = [] // This variable is used for gathering options from the backend
+        self.selected_model = '' // This variable is used to check the selected version
+        self.width = 0 // This is the progress of downloading
 
-        // assign the injected parameters, e.g.:
-        // self.loginStateViewModel = parameters[0]
-        // self.settingsViewModel = parameters[1]
-
-        // TODO: Implement your plugin's view model here.
-        console.log("Starting up Robo Configuration Tool!")
-        self.printer_options = []
-        self.selected_model = ''
-        self.width = 0
+        //This function will gather the printer options from the backend
         self.get_printer_options = function(){
             //get options from backend
             $.ajax({
                 url: PLUGIN_BASEURL + "Dual_Extruder_Setup/get_model_options",
                 type: "GET",
                 datatype: "json",
-                //data: JSON.stringify({}),
                 contentType: "application/json charset=UTF-8",
                 success: function(response){
-                    console.log(response)
-
                     self.printer_options = JSON.parse(response)
                     self.selected_model = self.printer_options[0]
                     
@@ -37,14 +29,15 @@ $(function() {
             })
         }
 
+        //This function gets called every time the user changes their choice on the frontend
         self.set_selected_model= function(){
             var model_index = document.getElementById("model_dropdown").selectedIndex
             self.selected_model = self.printer_options[model_index]
             console.log(self.selected_model)
         }
 
+        //This will start the configuration process
         self.change_configuration = function(){
-            //self.get_progress()
             $.ajax({
                 url: PLUGIN_BASEURL + "Dual_Extruder_Setup/change_and_install",
                 type: "POST",
@@ -56,6 +49,7 @@ $(function() {
             })
         }
 
+        //This gets called every time a progress bar message gets recieved
         self.frame = function(){
             elem = document.getElementById("robo_progress_bar")            
             state = document.getElementById("state_label")
@@ -63,14 +57,8 @@ $(function() {
             state.innerHTML = "Downloading Firmware " + self.width + "%"
         }       
 
-        self.get_progress = function(){
-            
-            self.width = 0
-            self.frame()
-            // document.getElementById("config_progress").visibility = 'visible'
-        }
-
-        self._firmware_progress = function(event){
+        //This gets called every time there is a plugin event
+        self._plugin_event = function(event){
             if ('data' in event){
                 data = event['data']
                 if (data['plugin'] == 'Dual_Extruder_Setup'){
@@ -81,15 +69,32 @@ $(function() {
                     } else if(data['type'] == 'state'){
                         state = document.getElementById("state_label")
                         state.innerHTML = data['data']
+
+                        if(data['data'] == "Finished!"){
+                            setTimeout(self.cleanup_elements, 2000)
+                        }
                     }
                 }
             }
         }
 
-        
+        //This gets called after the config process is finished. It will reload the page so the 
+        //Printer default profile gets updated
+        self.cleanup_elements = function(){
+            state = document.getElementById("state_label")
+            state.innerHTML = "Reloading"
+            elem = document.getElementById("robo_progress_bar")    
+            elem.style.width = 0
 
+            location.reload()
+
+        }
+
+        
+        //get the options right off the bat
         self.get_printer_options()
-        OctoPrint.socket.onMessage("plugin", self._firmware_progress)
+        //Register the callback for a plugin message
+        OctoPrint.socket.onMessage("plugin", self._plugin_event)
             
         
 

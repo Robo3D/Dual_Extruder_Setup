@@ -10,7 +10,7 @@
 }
 
 .config_button{
-    background-color: #af4c4c; /* pastel red */
+    background-color: #69B3E7; /* Robo Blue */
     border: none;
     color: white;
     padding: 5px 32px;
@@ -25,7 +25,7 @@
 }
 .robo_progress{
     color:#fff!important;
-    background-color:#37bd00!important;
+    background-color:#69B3E7!important;
     height:24px;
     width:0;
 

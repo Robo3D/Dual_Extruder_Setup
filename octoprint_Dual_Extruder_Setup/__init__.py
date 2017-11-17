@@ -2,7 +2,7 @@
 # @Author: Matt Pedler
 # @Date:   2017-11-07 11:43:20
 # @Last Modified by:   Matt Pedler
-# @Last Modified time: 2017-11-16 18:14:58
+# @Last Modified time: 2017-11-17 09:43:35
 # coding=utf-8
 
 from __future__ import absolute_import
@@ -76,8 +76,8 @@ class Dual_Extruder_Setup(octoprint.plugin.SettingsPlugin,
 
         #get firmware
         if self.octo_setup.check_connection():
-            self._logger.info("Downloading Firmware")
-            self._plugin_manager.send_plugin_message(self._identifier, dict(type="state", data="Downloading Firmware"))
+            self._logger.info("Preparing to Downloading Firmware")
+            self._plugin_manager.send_plugin_message(self._identifier, dict(type="state", data="Preparing to Download Firmware"))
             self.octo_setup.clear_callbacks()
             self.octo_setup.register_progress_callback(self.firmware_progress)
             firm_path = self.octo_setup.download_firmware(version=model)
@@ -89,7 +89,7 @@ class Dual_Extruder_Setup(octoprint.plugin.SettingsPlugin,
             while(is_updating):
                 is_updating = self.firmware_updating() #hang out until this is complete
                 time_elapsed = (time.time() - current_time)
-                self._plugin_manager.send_plugin_message(self._identifier, dict(type="state", data="Flashing Firmware. Elapsed Time: " + "{0:.1f}".format(time_elapsed)))
+                self._plugin_manager.send_plugin_message(self._identifier, dict(type="state", data="Flashing Firmware. Elapsed Time: " + "{0:.1f}".format(time_elapsed) + "s"))
 
         else:
             self._logger.info("No Connection to Lambda Function")
