@@ -53,30 +53,14 @@ $(function() {
                     model: self.selected_model
                 }),
                 contentType: "application/json charset=UTF-8",
-                // success: function(response){
-                //     location.reload()
-                // }
-
             })
         }
 
         self.frame = function(){
             elem = document.getElementById("robo_progress_bar")            
-            if (self.width <=25){
-                elem.style.width = self.width + '%' 
-                elem.innerHTML = "Download " + self.width + "%"
-            }
-            else if (self.width > 25 && self.width <= 75){
-                elem.style.width = self.width + '%' 
-                elem.innerHTML = "Firmware Upload " + self.width + "%"
-            }
-            else if(self.width > 75){ 
-                elem.style.width = self.width + '%' 
-                elem.innerHTML = "Profile Change " + self.width + "%"
-            }
-              
-            
-            
+            state = document.getElementById("state_label")
+            elem.style.width = self.width + '%' 
+            state.innerHTML = "Downloading Firmware " + self.width + "%"
         }       
 
         self.get_progress = function(){
@@ -94,6 +78,9 @@ $(function() {
                     if (data['type'] == 'firmware_progress'){
                         self.width = data['data'] // data squared
                         self.frame()
+                    } else if(data['type'] == 'state'){
+                        state = document.getElementById("state_label")
+                        state.innerHTML = data['data']
                     }
                 }
             }

@@ -7,5 +7,5 @@ This software is a cross platform Dual Extrusion Setup and has(will have) the fo
 - change the default profile to a Dual Extrusion Profile
 - change the default profile back to a Single Extrusion Profile
 
-Secondary Goals
-- recovery feature to flash firmware with the most recent released Robo Firmware in case a user wants to come back to vanilla Robo
+# Warning
+The current hex files associated with this program are not up to date. Do not use yet.

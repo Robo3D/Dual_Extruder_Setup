@@ -2,7 +2,7 @@
 # @Author: Matt Pedler
 # @Date:   2017-11-07 12:00:08
 # @Last Modified by:   Matt Pedler
-# @Last Modified time: 2017-11-16 15:09:03
+# @Last Modified time: 2017-11-16 17:32:49
 
 import requests
 import json
@@ -98,7 +98,6 @@ class Robo_Octo_Setup(object):
                     size += 1024.00 #not exact size of chunk, but close enough for this purpose
                     self.progress = int((size/length)*100.00)
                     
-        self.progress = 0
         return dl_path
 
     @property

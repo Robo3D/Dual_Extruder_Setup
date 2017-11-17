@@ -2,7 +2,7 @@
 # @Author: Matt Pedler
 # @Date:   2017-11-07 11:43:20
 # @Last Modified by:   Matt Pedler
-# @Last Modified time: 2017-11-16 17:12:44
+# @Last Modified time: 2017-11-16 18:14:58
 # coding=utf-8
 
 from __future__ import absolute_import
@@ -10,6 +10,7 @@ from . import Octo_Setup
 from .Octo_Setup.Robo_Octo_Setup import Robo_Octo_Setup
 import flask
 import json
+import time
 
 import octoprint.plugin
 
@@ -76,11 +77,20 @@ class Dual_Extruder_Setup(octoprint.plugin.SettingsPlugin,
         #get firmware
         if self.octo_setup.check_connection():
             self._logger.info("Downloading Firmware")
+            self._plugin_manager.send_plugin_message(self._identifier, dict(type="state", data="Downloading Firmware"))
             self.octo_setup.clear_callbacks()
             self.octo_setup.register_progress_callback(self.firmware_progress)
             firm_path = self.octo_setup.download_firmware(version=model)
             self._logger.info("Installing Firmware")
+            self._plugin_manager.send_plugin_message(self._identifier, dict(type="state", data="Flashing Firmware"))
             self.flash_usb(firm_path)
+            is_updating = self.firmware_updating()
+            current_time = time.time()
+            while(is_updating):
+                is_updating = self.firmware_updating() #hang out until this is complete
+                time_elapsed = (time.time() - current_time)
+                self._plugin_manager.send_plugin_message(self._identifier, dict(type="state", data="Flashing Firmware. Elapsed Time: " + "{0:.1f}".format(time_elapsed)))
+
         else:
             self._logger.info("No Connection to Lambda Function")
             return False
@@ -101,9 +111,13 @@ class Dual_Extruder_Setup(octoprint.plugin.SettingsPlugin,
             #install Firmware
             self.install_firmware(model=str(model))
             #change profile
+            self._plugin_manager.send_plugin_message(self._identifier, dict(type="state", data="Changing The Profile"))
             self.change_profile(model=str(model))
             #return okay
+            time.sleep(2)
+            self._plugin_manager.send_plugin_message(self._identifier, dict(type="state", data="Finished!"))
             return flask.make_response("Ok.", 200)
+        self._plugin_manager.send_plugin_message(self._identifier, dict(type="state", data="Failed"))
         return flask.make_response("Error.", 500)
 
     @octoprint.plugin.BlueprintPlugin.route("/get_model_options", methods=['GET'])
