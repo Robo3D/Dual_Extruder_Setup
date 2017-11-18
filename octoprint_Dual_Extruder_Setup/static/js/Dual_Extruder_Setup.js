@@ -90,7 +90,19 @@ $(function() {
 
         }
 
-        
+        self.add_to_printer_section = function(){
+
+            //delete old thing
+            old_elem = document.getElementById("settings_plugin_Dual_Extruder_Setup_link")
+            old_elem.remove()
+
+            //add to new thing
+            elem = document.getElementById("settings_gcodeScripts_link")
+            elem.insertAdjacentHTML('afterend', '<li id="settings_plugin_Dual_Extruder_Setup_link" data-bind="allowBindings: true" class=" "><a href="#settings_plugin_Dual_Extruder_Setup" data-toggle="tab">Robo Configuration Tool</a></li>')
+        }
+
+        //put us in the printer tab
+        self.add_to_printer_section()
         //get the options right off the bat
         self.get_printer_options()
         //Register the callback for a plugin message
