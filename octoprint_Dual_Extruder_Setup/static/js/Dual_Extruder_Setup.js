@@ -100,7 +100,7 @@ $(function() {
                 //add to new thing
                 elem = document.getElementById("settings_gcodeScripts_link")
                 elem.insertAdjacentHTML('afterend', '<li id="settings_plugin_Dual_Extruder_Setup_link" data-bind="allowBindings: true" class=" "><a href="#settings_plugin_Dual_Extruder_Setup" data-toggle="tab">Robo Configuration Tool</a></li>')
-
+                console.log("Configuration tool Binding done")
             }else{
                 console.log("Cannot find GCODE scripts and we will not be moving our link")
             }
